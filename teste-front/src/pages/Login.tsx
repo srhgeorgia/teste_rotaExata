@@ -1,4 +1,3 @@
-// Login.tsx
 import { useState } from 'react';
 import { TextField, InputAdornment, IconButton } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
@@ -10,11 +9,34 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [popupMessage, setPopupMessage] = useState('');
+  const [popupType, setPopupType] = useState<'success' | 'error' | ''>('');
   const navigate = useNavigate();
+
+  const showPopup = (message: string, type: 'success' | 'error') => {
+    setPopupMessage(message);
+    setPopupType(type);
+
+    setTimeout(() => {
+      setPopupMessage('');
+      setPopupType('');
+    }, 3000);
+  };
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    console.log('E-mail:', email, 'Senha:', password);
+
+    const storedEmail = localStorage.getItem('email');
+    const storedPassword = localStorage.getItem('password');
+
+    if (email === storedEmail && password === storedPassword) {
+      showPopup('Login realizado com sucesso!', 'success');
+      setTimeout(() => {
+        navigate('/home');
+      }, 2000);
+    } else {
+      showPopup('E-mail ou senha incorretos!', 'error');
+    }
   };
 
   const handleCreateAccount = () => {
@@ -38,6 +60,19 @@ const Login = () => {
             />
             <h3 className={styles.primary}>Login</h3>
           </div>
+
+          {/* Exibir o popup */}
+          {popupMessage && (
+            <div
+              className={`${styles.popup} ${
+                popupType === 'success'
+                  ? styles.successPopup
+                  : styles.errorPopup
+              }`}
+            >
+              {popupMessage}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className={styles.formContainer}>
             <TextField
@@ -67,7 +102,7 @@ const Login = () => {
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton onClick={handleClickShowPassword} edge="end">
-                      {showPassword ? <VisibilityOff /> : <Visibility />}{' '}
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
                   </InputAdornment>
                 ),

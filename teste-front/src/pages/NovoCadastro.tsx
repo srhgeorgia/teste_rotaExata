@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { TextField, InputAdornment, IconButton } from '@mui/material';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { TextField } from '@mui/material';
 import styles from '../styles/NovoCadastro.module.css';
 import { Button } from './Button';
 import { useNavigate } from 'react-router-dom';
@@ -10,29 +9,57 @@ const NovoCadastro = () => {
   const [usuario, setUsuario] = useState('');
   const [dataNascimento, setDataNascimento] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+  const [popupMessage, setPopupMessage] = useState('');
+  const [popupType, setPopupType] = useState<'success' | 'error' | ''>('');
   const navigate = useNavigate();
+
+  const showPopup = (message: string, type: 'success' | 'error') => {
+    setPopupMessage(message);
+    setPopupType(type);
+
+    setTimeout(() => {
+      setPopupMessage('');
+      setPopupType('');
+    }, 3000);
+  };
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    console.log(
-      'E-mail:',
-      email,
-      'Senha:',
-      password,
-      'Usuário:',
-      usuario,
-      'Data de nascimento:',
-      dataNascimento,
-    );
-  };
 
-  const handleLogin = () => {
-    navigate('/');
-  };
+    if (localStorage.getItem(email)) {
+      showPopup('Este e-mail já está cadastrado.', 'error');
+      return;
+    }
 
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
+    if (localStorage.getItem(usuario)) {
+      showPopup('Este usuário já está cadastrado.', 'error');
+      return;
+    }
+
+    if (!email.includes('@')) {
+      showPopup('O e-mail deve conter "@"', 'error');
+      return;
+    }
+
+    const passwordRegex = /^(?=.*[A-Z]).{6,}$/;
+    if (!passwordRegex.test(password)) {
+      showPopup(
+        'A senha deve conter pelo menos 1 letra maiúscula e ter no mínimo 6 caracteres.',
+        'error',
+      );
+      return;
+    }
+
+    localStorage.setItem('email', email);
+    localStorage.setItem('password', password);
+    localStorage.setItem('usuario', usuario);
+    localStorage.setItem('dataNascimento', dataNascimento);
+
+    showPopup('Cadastro realizado com sucesso!', 'success');
+
+    setTimeout(() => {
+      navigate('/');
+    }, 2000);
   };
 
   return (
@@ -47,6 +74,17 @@ const NovoCadastro = () => {
           />
           <h3 className={styles.primary}>Novo Cadastro</h3>
         </div>
+
+        {popupMessage && (
+          <div
+            className={`${styles.popup} ${
+              popupType === 'success' ? styles.successPopup : styles.errorPopup
+            }`}
+          >
+            {popupMessage}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className={styles.formContainer}>
           <TextField
             label="Nome de usuário"
@@ -84,7 +122,7 @@ const NovoCadastro = () => {
           <TextField
             label="Senha"
             variant="outlined"
-            type={showPassword ? 'text' : 'password'}
+            type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className={styles.textField}
@@ -92,21 +130,12 @@ const NovoCadastro = () => {
               shrink: true,
             }}
             placeholder="Digite a senha"
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={handleClickShowPassword} edge="end">
-                    {showPassword ? <VisibilityOff /> : <Visibility />}{' '}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
           />
         </form>
         <Button label="CADASTRAR" onClick={handleSubmit} />
-        <p className={styles.alternativeButton} onClick={handleLogin}>
+        <p className={styles.alternativeButton} onClick={() => navigate('/')}>
           Fazer login
-        </p>{' '}
+        </p>
       </div>
     </div>
   );
