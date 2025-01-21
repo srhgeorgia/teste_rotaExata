@@ -13,16 +13,22 @@ import {
 } from '@mui/material';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import StarIcon from '@mui/icons-material/Star';
-import styles from '../styles/Veiculos.module.css';
+import styles from '../styles/VeiculosTable.module.css';
 import { Veiculo } from '../interfaces/Veiculo';
 
 interface VeiculosTableProps {
   veiculos: Veiculo[];
   onEdit: (veiculo: Veiculo) => void;
   onDelete: (veiculo: Veiculo) => void;
+  onDetail: (veiculo: Veiculo) => void;
 }
 
-const VeiculosTable = ({ veiculos, onEdit, onDelete }: VeiculosTableProps) => {
+const VeiculosTable = ({
+  veiculos,
+  onEdit,
+  onDelete,
+  onDetail,
+}: VeiculosTableProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedVeiculo, setSelectedVeiculo] = useState<Veiculo | null>(null);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
@@ -40,13 +46,6 @@ const VeiculosTable = ({ veiculos, onEdit, onDelete }: VeiculosTableProps) => {
     setSelectedVeiculo(null);
   };
 
-  const handleEdit = () => {
-    if (selectedVeiculo) {
-      onEdit(selectedVeiculo);
-    }
-    handleClose();
-  };
-
   const handleDelete = () => {
     if (selectedVeiculo) {
       onDelete(selectedVeiculo);
@@ -54,10 +53,24 @@ const VeiculosTable = ({ veiculos, onEdit, onDelete }: VeiculosTableProps) => {
     handleClose();
   };
 
+  const handleEdit = () => {
+    if (selectedVeiculo) {
+      onEdit(selectedVeiculo);
+    }
+    handleClose();
+  };
+
+  const handleDetail = () => {
+    if (selectedVeiculo) {
+      onDetail(selectedVeiculo);
+    }
+    handleClose();
+  };
+
   const renderStars = (nivelConforto: number) => {
     return (
       <div className={styles.stars}>
-        <span>{nivelConforto - 1}</span>
+        <span>{Math.max(nivelConforto - 1, 0)}</span>
         <StarIcon style={{ color: '#007DF0' }} />{' '}
       </div>
     );
@@ -77,7 +90,7 @@ const VeiculosTable = ({ veiculos, onEdit, onDelete }: VeiculosTableProps) => {
 
   return (
     <div className={styles.tableWrapper}>
-      <TableContainer component={Paper} className={styles.tableContainer}>
+      <TableContainer component={Paper}>
         <Table>
           <TableHead>
             <TableRow>
@@ -136,8 +149,9 @@ const VeiculosTable = ({ veiculos, onEdit, onDelete }: VeiculosTableProps) => {
                     open={Boolean(anchorEl)}
                     onClose={handleClose}
                   >
-                    <MenuItem onClick={handleEdit}>Editar</MenuItem>
                     <MenuItem onClick={handleDelete}>Deletar</MenuItem>
+                    <MenuItem onClick={handleEdit}>Editar</MenuItem>
+                    <MenuItem onClick={handleDetail}>Detalhar</MenuItem>
                   </Menu>
                 </TableCell>
               </TableRow>

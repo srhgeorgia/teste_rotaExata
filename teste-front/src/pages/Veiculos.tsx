@@ -9,18 +9,22 @@ import { TextField, MenuItem, FormControl } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
+import Details from '../Components/Details';
 
 const Veiculos = () => {
+  const [isSearchClicked, setIsSearchClicked] = useState(false);
   const [isFormVisible, setIsFormVisible] = useState(false);
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+
   const [veiculos, setVeiculos] = useState<Veiculo[]>([]);
   const [editingVeiculo, setEditingVeiculo] = useState<Veiculo | null>(null);
-  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [veiculoToDelete, setVeiculoToDelete] = useState<Veiculo | null>(null);
+  const [selectedVeiculo, setSelectedVeiculo] = useState<Veiculo | null>(null);
 
   const [placaFilter, setPlacaFilter] = useState('');
   const [marcaFilter, setMarcaFilter] = useState('');
   const [propositoFilter, setPropositoFilter] = useState('');
-  const [isSearchClicked, setIsSearchClicked] = useState(false);
 
   const propositos = ['Uso pessoal', 'Veículo para locação', 'Uso da empresa'];
   const marcas = [
@@ -49,12 +53,7 @@ const Veiculos = () => {
 
   useEffect(() => {
     const storedVeiculos = JSON.parse(localStorage.getItem('veiculos') || '[]');
-    const storedHistorico = JSON.parse(
-      localStorage.getItem('historico') || '[]',
-    );
-
     setVeiculos(storedVeiculos);
-    console.log('Histórico:', storedHistorico);
   }, []);
 
   const saveHistorico = (action: string, veiculo: Veiculo) => {
@@ -76,6 +75,16 @@ const Veiculos = () => {
   const handleEditVeiculo = (veiculo: Veiculo) => {
     setEditingVeiculo(veiculo);
     setIsFormVisible(true);
+  };
+
+  const handleDetail = (veiculo: Veiculo) => {
+    setSelectedVeiculo(veiculo);
+    setIsDetailsOpen(true);
+  };
+
+  const handleCloseDetails = () => {
+    setSelectedVeiculo(null);
+    setIsDetailsOpen(false);
   };
 
   const handleCancelDelete = () => {
@@ -203,11 +212,20 @@ const Veiculos = () => {
         />
       )}
 
+      {selectedVeiculo && (
+        <Details
+          open={isDetailsOpen}
+          onCancel={handleCloseDetails}
+          veiculo={selectedVeiculo}
+        />
+      )}
+
       {!isFormVisible && (
         <VeiculosTable
           veiculos={filteredVeiculos}
           onEdit={handleEditVeiculo}
           onDelete={handleDeleteVeiculo}
+          onDetail={handleDetail}
         />
       )}
 

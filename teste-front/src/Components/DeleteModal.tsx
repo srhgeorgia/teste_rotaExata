@@ -1,5 +1,5 @@
 import { Button } from './Button';
-import styles from '../styles/Veiculos.module.css';
+import styles from '../styles/DeleteModal.module.css';
 import { Veiculo } from '../interfaces/Veiculo';
 
 interface DeleteModalProps {

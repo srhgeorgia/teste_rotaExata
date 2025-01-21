@@ -1,0 +1,12 @@
+.tableWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 31px;
+}
+
+.stars {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}

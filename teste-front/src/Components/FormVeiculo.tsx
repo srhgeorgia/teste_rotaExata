@@ -12,14 +12,15 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import StarIcon from '@mui/icons-material/Star';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
-import styles from '../styles/Veiculos.module.css';
+import styles from '../styles/FormVeiculo.module.css';
+import stylesPop from '../styles/ErrorPopUp.module.css';
 import { Veiculo } from '../interfaces/Veiculo';
 
 interface FormVeiculoProps {
   veiculo: Veiculo | null;
   onSave: (veiculo: Veiculo) => void;
   onCancel: () => void;
-  isEditing: boolean; // Novo prop para controlar se está em modo de edição
+  isEditing: boolean;
 }
 
 const FormVeiculo = ({
@@ -319,10 +320,10 @@ const FormVeiculo = ({
         </form>
 
         {error && (
-          <div className={styles.errorPopup}>
-            <div className={styles.errorPopupContent}>
+          <div className={stylesPop.errorPopup}>
+            <div className={stylesPop.errorPopupContent}>
               <span
-                className={styles.errorPopupClose}
+                className={stylesPop.errorPopupClose}
                 onClick={() => setError(null)}
               >
                 &times;
