@@ -1,0 +1,80 @@
+.content {
+  margin-top: 2rem;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.topBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #f0f0f0;
+  height: 58px;
+  /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
+}
+
+.topButtons {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.logo {
+  margin-right: 30px;
+  height: 20px;
+  height: 38px;
+  width: 188px;
+}
+
+.button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px;
+  border-radius: 5px;
+  border: none;
+  background-color: #dfdfdf;
+  color: #1f1f1f;
+  font-weight: 700;
+  cursor: pointer;
+  gap: 10px;
+  font-size: 14px;
+  height: 38px;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
+}
+
+.button:focus {
+  outline: none;
+}
+
+.button:active {
+  transform: scale(0.98);
+}
+
+.button:hover {
+  background-color: #007df01a;
+  color: #007df0;
+  border-color: #007df0;
+}
+
+.activeButton {
+  outline: none;
+  background-color: #007df01a;
+  color: #007df0;
+  border-color: #007df0;
+}
+
+.topUser {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.user {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}

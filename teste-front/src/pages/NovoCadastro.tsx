@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { TextField } from '@mui/material';
 import styles from '../styles/NovoCadastro.module.css';
-import { Button } from './Button';
+import { Button } from '../Components/Button';
 import { useNavigate } from 'react-router-dom';
 
 const NovoCadastro = () => {
@@ -132,7 +132,11 @@ const NovoCadastro = () => {
             placeholder="Digite a senha"
           />
         </form>
-        <Button label="CADASTRAR" onClick={handleSubmit} />
+        <Button
+          label="CADASTRAR"
+          onClick={() => handleSubmit}
+          className={styles.button}
+        />
         <p className={styles.alternativeButton} onClick={() => navigate('/')}>
           Fazer login
         </p>

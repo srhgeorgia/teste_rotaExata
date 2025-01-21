@@ -103,6 +103,28 @@
   color: white;
 }
 
+.button {
+  display: flex;
+  justify-content: center;
+  background-color: #007df0;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px;
+  width: 400px;
+  height: 40px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 400;
+  gap: 10px;
+  transition: background-color 0.3s;
+  margin-top: 15px;
+}
+
+.button:hover {
+  background-color: #0056b3;
+}
+
 @keyframes fadeInOut {
   0% {
     opacity: 0;

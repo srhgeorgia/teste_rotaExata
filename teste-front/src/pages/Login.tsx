@@ -3,7 +3,7 @@ import { TextField, InputAdornment, IconButton } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import styles from '../styles/Login.module.css';
-import { Button } from './Button';
+import { Button } from '../Components/Button';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -61,7 +61,6 @@ const Login = () => {
             <h3 className={styles.primary}>Login</h3>
           </div>
 
-          {/* Exibir o popup */}
           {popupMessage && (
             <div
               className={`${styles.popup} ${
@@ -108,7 +107,11 @@ const Login = () => {
                 ),
               }}
             />
-            <Button label="ENTRAR" onClick={handleSubmit} />
+            <Button
+              label="ENTRAR"
+              onClick={() => handleSubmit}
+              className={styles.button}
+            />
             <p
               className={styles.alternativeButton}
               onClick={handleCreateAccount}
