@@ -3,10 +3,13 @@ import styles from '../styles/Home.module.css';
 import { Button } from '../Components/Button';
 import Veiculos from './Veiculos';
 import Historico from './Historico';
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
   const [usuario, setUsuario] = useState('');
   const [activeSection, setActiveSection] = useState<string>('VEÍCULOS');
+  const [showMenu, setShowMenu] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const storedUsuario = localStorage.getItem('usuario');
@@ -25,15 +28,17 @@ const Home = () => {
     return null;
   };
 
+  const handleLogout = () => {
+    setActiveSection('VEÍCULOS');
+    setShowMenu(false);
+    navigate('/');
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.topBar}>
         <div className={styles.topButtons}>
-          <img
-            src="/public/assets/Logo.png"
-            alt="logo"
-            className={styles.logo}
-          />
+          <img src="/assets/Logo.png" alt="logo" className={styles.logo} />
           <Button
             label="VEÍCULOS"
             onClick={() => setActiveSection('VEÍCULOS')}
@@ -58,9 +63,24 @@ const Home = () => {
               <strong>{usuario}</strong>
             </p>
           </div>
-          <img src="/public/assets/Photo.png" alt="user" />
+          <img
+            src="/assets/Photo.png"
+            alt="user"
+            className={styles.userIcon}
+            onClick={() => setShowMenu(!showMenu)}
+          />
         </div>
       </div>
+
+      {showMenu && (
+        <div className={styles.menuOptions}>
+          <Button
+            label="Sair"
+            onClick={handleLogout}
+            className={styles.button}
+          />
+        </div>
+      )}
 
       <div className={styles.content}>{renderSection()}</div>
     </div>

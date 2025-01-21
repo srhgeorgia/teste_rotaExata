@@ -9,6 +9,7 @@ const NovoCadastro = () => {
   const [usuario, setUsuario] = useState('');
   const [dataNascimento, setDataNascimento] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [popupMessage, setPopupMessage] = useState('');
   const [popupType, setPopupType] = useState<'success' | 'error' | ''>('');
   const navigate = useNavigate();
@@ -50,6 +51,11 @@ const NovoCadastro = () => {
       return;
     }
 
+    if (password !== confirmPassword) {
+      showPopup('As senhas não coincidem!', 'error');
+      return;
+    }
+
     localStorage.setItem('email', email);
     localStorage.setItem('password', password);
     localStorage.setItem('usuario', usuario);
@@ -74,7 +80,6 @@ const NovoCadastro = () => {
           />
           <h3 className={styles.primary}>Novo Cadastro</h3>
         </div>
-
         {popupMessage && (
           <div
             className={`${styles.popup} ${
@@ -84,7 +89,6 @@ const NovoCadastro = () => {
             {popupMessage}
           </div>
         )}
-
         <form onSubmit={handleSubmit} className={styles.formContainer}>
           <TextField
             label="Nome de usuário"
@@ -92,6 +96,7 @@ const NovoCadastro = () => {
             type="text"
             onChange={(e) => setUsuario(e.target.value)}
             className={styles.textField}
+            size="small"
             InputLabelProps={{
               shrink: true,
             }}
@@ -103,6 +108,7 @@ const NovoCadastro = () => {
             type="date"
             onChange={(e) => setDataNascimento(e.target.value)}
             className={styles.textField}
+            size="small"
             InputLabelProps={{
               shrink: true,
             }}
@@ -112,6 +118,7 @@ const NovoCadastro = () => {
             variant="outlined"
             type="email"
             value={email}
+            size="small"
             onChange={(e) => setEmail(e.target.value)}
             className={styles.textField}
             InputLabelProps={{
@@ -126,15 +133,31 @@ const NovoCadastro = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className={styles.textField}
+            size="small"
             InputLabelProps={{
               shrink: true,
             }}
             placeholder="Digite a senha"
           />
+          <TextField
+            label="Confirmar Senha"
+            variant="outlined"
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            className={styles.textField}
+            size="small"
+            InputLabelProps={{
+              shrink: true,
+            }}
+            placeholder="Confirme sua senha"
+          />
         </form>
         <Button
           label="CADASTRAR"
-          onClick={() => handleSubmit}
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-expect-error
+          onClick={handleSubmit}
           className={styles.button}
         />
         <p className={styles.alternativeButton} onClick={() => navigate('/')}>

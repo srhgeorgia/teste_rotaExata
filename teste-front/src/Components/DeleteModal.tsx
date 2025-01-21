@@ -12,11 +12,13 @@ const DeleteModal = ({ veiculo, onConfirm, onCancel }: DeleteModalProps) => {
   if (!veiculo) return null;
 
   return (
-    <div className={styles.modal}>
-      <div className={styles.modalContent}>
+    <div className={styles.modalDelete}>
+      <div className={styles.modalDeleteContent}>
         <p>Tem certeza que deseja excluir o veículo {veiculo.placa}?</p>
-        <Button label="Sim" onClick={onConfirm} className={styles.button} />
-        <Button label="Não" onClick={onCancel} className={styles.button} />
+        <div className={styles.modalDeleteButtons}>
+          <Button label="Sim" onClick={onConfirm} className={styles.button} />
+          <Button label="Não" onClick={onCancel} className={styles.button} />
+        </div>
       </div>
     </div>
   );

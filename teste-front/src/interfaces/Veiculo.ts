@@ -1,8 +1,4 @@
-import { ReactNode } from 'react';
-
 export interface Veiculo {
-  localRepouso: ReactNode;
-  conforto: number | null | undefined;
   zeroQuilometro: unknown;
   nivelConforto: number;
   placa: string;

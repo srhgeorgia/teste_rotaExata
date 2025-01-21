@@ -5,6 +5,77 @@
   padding: 1rem 2rem;
 }
 
+.formContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin: 2rem 25rem 0 25rem;
+}
+
+.formContent {
+  border-radius: 0 0 5px 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  padding: 30px;
+}
+
+.headerForms {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #007df0;
+  width: 100%;
+  height: 76px;
+  font-weight: 400;
+  color: #ffffff;
+  font-size: 18px;
+  border-radius: 5px 5px 0 0;
+  padding: 20px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 15px;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  /* margin: 15px; */
+}
+
+.tableWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 31px;
+}
+
+/* .tableContainer {
+  margin: 15px;
+} */
+
+.latLong {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  margin: 20px 0 0 17px;
+}
+
+.latLongFields {
+  display: flex;
+  gap: 10px;
+  margin-top: 5px;
+}
+
 .modal {
   display: flex;
   justify-content: space-between;
@@ -19,6 +90,58 @@
   display: flex;
   justify-content: space-between;
   /* align-items: center; */
+}
+
+.modalDelete {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  font-weight: 700;
+  gap: 10px;
+  font-size: 14px;
+  height: 38px;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
+}
+
+.modalDeleteContent {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  background-color: #f0f0f0;
+  padding: 50px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+}
+
+.modalDeleteButtons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.filters {
+  display: flex;
+  gap: 10px;
+  height: 47px;
+  width: 43rem;
+}
+
+.filterButtons {
+  display: flex;
+  border: #dfdfdf 1px solid;
+  border-radius: 5px;
+  height: 40px;
+}
+
+.separator {
+  width: 0.5px;
+  height: 39px;
+  background-color: #ccc;
+  margin: 0 10px;
 }
 
 .button {
@@ -59,6 +182,12 @@
 
 .hidden {
   display: none;
+}
+
+.stars {
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
 .errorPopup {

@@ -81,6 +81,7 @@ const Login = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className={styles.textField}
+              size="small"
               InputLabelProps={{
                 shrink: true,
               }}
@@ -93,6 +94,7 @@ const Login = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className={styles.textField}
+              size="small"
               InputLabelProps={{
                 shrink: true,
               }}

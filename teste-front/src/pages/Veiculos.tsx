@@ -1,10 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '../Components/Button';
 import FormVeiculo from '../Components/FormVeiculo';
 import VeiculosTable from '../Components/VeiculosTable';
 import DeleteModal from '../Components/DeleteModal';
 import styles from '../styles/Veiculos.module.css';
 import { Veiculo } from '../interfaces/Veiculo';
+import { TextField, MenuItem, FormControl } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import IconButton from '@mui/material/IconButton';
+import SearchIcon from '@mui/icons-material/Search';
 
 const Veiculos = () => {
   const [isFormVisible, setIsFormVisible] = useState(false);
@@ -13,10 +17,10 @@ const Veiculos = () => {
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [veiculoToDelete, setVeiculoToDelete] = useState<Veiculo | null>(null);
 
-  // Filtros
   const [placaFilter, setPlacaFilter] = useState('');
   const [marcaFilter, setMarcaFilter] = useState('');
   const [propositoFilter, setPropositoFilter] = useState('');
+  const [isSearchClicked, setIsSearchClicked] = useState(false);
 
   const propositos = ['Uso pessoal', 'Veículo para locação', 'Uso da empresa'];
   const marcas = [
@@ -32,18 +36,46 @@ const Veiculos = () => {
     'Audi',
   ];
 
-  // Aplica os filtros aos veículos
   const filteredVeiculos = veiculos.filter((veiculo) => {
-    return (
-      (placaFilter === '' || veiculo.placa.includes(placaFilter)) &&
-      (marcaFilter === '' || veiculo.marca === marcaFilter) &&
-      (propositoFilter === '' || veiculo.proposito === propositoFilter)
-    );
+    if (isSearchClicked) {
+      return (
+        (placaFilter === '' || veiculo.placa.includes(placaFilter)) &&
+        (marcaFilter === '' || veiculo.marca === marcaFilter) &&
+        (propositoFilter === '' || veiculo.proposito === propositoFilter)
+      );
+    }
+    return true;
   });
+
+  useEffect(() => {
+    const storedVeiculos = JSON.parse(localStorage.getItem('veiculos') || '[]');
+    const storedHistorico = JSON.parse(
+      localStorage.getItem('historico') || '[]',
+    );
+
+    setVeiculos(storedVeiculos);
+    console.log('Histórico:', storedHistorico);
+  }, []);
+
+  const saveHistorico = (action: string, veiculo: Veiculo) => {
+    const historico = JSON.parse(localStorage.getItem('historico') || '[]');
+    const timestamp = new Date().toLocaleString();
+    historico.push(`Veículo ${veiculo.placa} ${action} em ${timestamp}`);
+    localStorage.setItem('historico', JSON.stringify(historico));
+  };
+
+  const saveVeiculoToLocalStorage = (veiculos: Veiculo[]) => {
+    localStorage.setItem('veiculos', JSON.stringify(veiculos));
+  };
 
   const handleDeleteVeiculo = (veiculo: Veiculo) => {
     setVeiculoToDelete(veiculo);
     setIsDeleteModalVisible(true);
+  };
+
+  const handleEditVeiculo = (veiculo: Veiculo) => {
+    setEditingVeiculo(veiculo);
+    setIsFormVisible(true);
   };
 
   const handleCancelDelete = () => {
@@ -52,14 +84,21 @@ const Veiculos = () => {
   };
 
   const handleSaveVeiculo = (veiculo: Veiculo) => {
+    let updatedVeiculos = [...veiculos];
+
     if (editingVeiculo) {
-      const updatedVeiculos = veiculos.map((v) =>
+      updatedVeiculos = veiculos.map((v) =>
         v.placa === editingVeiculo.placa ? veiculo : v,
       );
-      setVeiculos(updatedVeiculos);
+      saveHistorico('EDITADO', veiculo);
     } else {
-      setVeiculos([...veiculos, veiculo]);
+      updatedVeiculos.push(veiculo);
+      saveHistorico('CADASTRADO', veiculo);
     }
+
+    setVeiculos(updatedVeiculos);
+    saveVeiculoToLocalStorage(updatedVeiculos);
+
     setIsFormVisible(false);
     setEditingVeiculo(null);
   };
@@ -70,7 +109,7 @@ const Veiculos = () => {
   };
 
   return (
-    <div className={styles.container}>
+    <>
       {!isFormVisible && (
         <div className={styles.header}>
           <Button
@@ -79,36 +118,78 @@ const Veiculos = () => {
             className={styles.button}
           />
           <div className={styles.filters}>
-            <form>
-              <input
-                type="text"
-                value={placaFilter}
-                onChange={(e) => setPlacaFilter(e.target.value)}
-                placeholder="Filtrar por placa"
-              />
-              <select
+            <FormControl fullWidth required>
+              <TextField
+                select
                 value={marcaFilter}
                 onChange={(e) => setMarcaFilter(e.target.value)}
+                label="Marca"
+                size="small"
+                required
+                fullWidth
+                InputLabelProps={{
+                  shrink: true,
+                }}
               >
-                <option value="">Marca</option>
                 {marcas.map((marca, index) => (
-                  <option key={index} value={marca}>
+                  <MenuItem key={index} value={marca}>
                     {marca}
-                  </option>
+                  </MenuItem>
                 ))}
-              </select>
-              <select
+              </TextField>
+            </FormControl>
+            <FormControl fullWidth required>
+              <TextField
+                label="Propósito de uso"
+                select
                 value={propositoFilter}
                 onChange={(e) => setPropositoFilter(e.target.value)}
+                required
+                size="small"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                placeholder="Selecione o propósito de uso"
+                fullWidth
               >
-                <option value="">Propósito de uso</option>
                 {propositos.map((proposito, index) => (
-                  <option key={index} value={proposito}>
+                  <MenuItem key={index} value={proposito}>
                     {proposito}
-                  </option>
+                  </MenuItem>
                 ))}
-              </select>
-            </form>
+              </TextField>
+            </FormControl>
+            <TextField
+              fullWidth
+              label="Placa"
+              value={placaFilter}
+              onChange={(e) => setPlacaFilter(e.target.value)}
+              required
+              size="small"
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+
+            <div className={styles.filterButtons}>
+              <IconButton
+                onClick={() => setIsSearchClicked(true)}
+                style={{ color: 'gray', width: '40px', height: '40px' }}
+              >
+                <SearchIcon data-testid="SearchIcon" />
+              </IconButton>
+              <div className={styles.separator}></div>
+              <IconButton
+                onClick={() => {
+                  setMarcaFilter('');
+                  setPropositoFilter('');
+                  setPlacaFilter('');
+                }}
+                style={{ color: 'gray', width: '40px', height: '40px' }}
+              >
+                <DeleteIcon data-testid="DeleteIcon" />
+              </IconButton>
+            </div>
           </div>
         </div>
       )}
@@ -118,14 +199,17 @@ const Veiculos = () => {
           veiculo={editingVeiculo}
           onSave={handleSaveVeiculo}
           onCancel={handleCancelForm}
+          isEditing={!!editingVeiculo}
         />
       )}
 
-      <VeiculosTable
-        veiculos={filteredVeiculos}
-        onEdit={setEditingVeiculo}
-        onDelete={handleDeleteVeiculo}
-      />
+      {!isFormVisible && (
+        <VeiculosTable
+          veiculos={filteredVeiculos}
+          onEdit={handleEditVeiculo}
+          onDelete={handleDeleteVeiculo}
+        />
+      )}
 
       {isDeleteModalVisible && (
         <DeleteModal
@@ -134,12 +218,16 @@ const Veiculos = () => {
             setVeiculos(
               veiculos.filter((v) => v.placa !== veiculoToDelete?.placa),
             );
+            saveHistorico('DELETADO', veiculoToDelete!);
+            saveVeiculoToLocalStorage(
+              veiculos.filter((v) => v.placa !== veiculoToDelete?.placa),
+            );
             setIsDeleteModalVisible(false);
           }}
           onCancel={handleCancelDelete}
         />
       )}
-    </div>
+    </>
   );
 };
 

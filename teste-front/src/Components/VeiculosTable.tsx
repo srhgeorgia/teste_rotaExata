@@ -10,9 +10,9 @@ import {
   IconButton,
   Menu,
   MenuItem,
-  Rating, // Importando o Rating do Material UI
 } from '@mui/material';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz'; // Ícone dos três pontinhos
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import StarIcon from '@mui/icons-material/Star';
 import styles from '../styles/Veiculos.module.css';
 import { Veiculo } from '../interfaces/Veiculo';
 
@@ -25,8 +25,8 @@ interface VeiculosTableProps {
 const VeiculosTable = ({ veiculos, onEdit, onDelete }: VeiculosTableProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedVeiculo, setSelectedVeiculo] = useState<Veiculo | null>(null);
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
-  // Abre o menu de ações
   const handleClick = (
     event: React.MouseEvent<HTMLElement>,
     veiculo: Veiculo,
@@ -35,7 +35,6 @@ const VeiculosTable = ({ veiculos, onEdit, onDelete }: VeiculosTableProps) => {
     setSelectedVeiculo(veiculo);
   };
 
-  // Fecha o menu de ações
   const handleClose = () => {
     setAnchorEl(null);
     setSelectedVeiculo(null);
@@ -55,65 +54,98 @@ const VeiculosTable = ({ veiculos, onEdit, onDelete }: VeiculosTableProps) => {
     handleClose();
   };
 
+  const renderStars = (nivelConforto: number) => {
+    return (
+      <div className={styles.stars}>
+        <span>{nivelConforto - 1}</span>
+        <StarIcon style={{ color: '#007DF0' }} />{' '}
+      </div>
+    );
+  };
+
+  const sortedVeiculos = [...veiculos].sort((a, b) => {
+    if (sortOrder === 'asc') {
+      return a.placa.localeCompare(b.placa);
+    } else {
+      return b.placa.localeCompare(a.placa);
+    }
+  });
+
+  const toggleSortOrder = () => {
+    setSortOrder((prevOrder) => (prevOrder === 'asc' ? 'desc' : 'asc'));
+  };
+
   return (
-    <TableContainer component={Paper} className={styles.tableContainer}>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell sx={{ color: '#007DF0' }}>Placa</TableCell>
-            <TableCell sx={{ color: '#007DF0' }}>Marca/Modelo</TableCell>
-            <TableCell sx={{ color: '#007DF0' }}>Ano</TableCell>
-            <TableCell sx={{ color: '#007DF0' }}>Cor</TableCell>
-            <TableCell sx={{ color: '#007DF0' }}>Propósito de uso</TableCell>
-            <TableCell sx={{ color: '#007DF0' }}>Zero-quilômetro?</TableCell>
-            <TableCell sx={{ color: '#007DF0' }}>
-              Nível de conforto
-            </TableCell>{' '}
-            {/* Alterado para incluir Rating */}
-            <TableCell sx={{ color: '#007DF0' }}>
-              Local de repouso (lat, long)
-            </TableCell>
-            <TableCell sx={{ color: '#007DF0' }}></TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {veiculos.map((veiculo, index) => (
-            <TableRow key={index}>
-              <TableCell>{veiculo.placa}</TableCell>
-              <TableCell>
-                {veiculo.marca} {veiculo.modelo}
+    <div className={styles.tableWrapper}>
+      <TableContainer component={Paper} className={styles.tableContainer}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell sx={{ color: '#007DF0', fontWeight: 'bold' }}>
+                <span style={{ cursor: 'pointer' }} onClick={toggleSortOrder}>
+                  {sortOrder === 'asc' ? '🔼' : '🔽'} Placa
+                </span>
               </TableCell>
-              <TableCell>{veiculo.ano}</TableCell>
-              <TableCell>{veiculo.cor}</TableCell>
-              <TableCell>{veiculo.proposito}</TableCell>
-              <TableCell>{veiculo.zeroQuilometro ? 'Sim' : 'Não'}</TableCell>
-              <TableCell>
-                <Rating
-                  name={`comfort-rating-${index}`}
-                  value={veiculo.conforto} // Valor de 0 a 5 (estrela)
-                  precision={0.5} // Precision para mostrar meia estrela
-                  readOnly
-                />
+              <TableCell sx={{ color: '#007DF0', fontWeight: 'bold' }}>
+                Marca/Modelo
               </TableCell>
-              <TableCell>{String(veiculo.localRepouso)}</TableCell>
-              <TableCell>
-                <IconButton onClick={(event) => handleClick(event, veiculo)}>
-                  <MoreHorizIcon />
-                </IconButton>
-                <Menu
-                  anchorEl={anchorEl}
-                  open={Boolean(anchorEl)}
-                  onClose={handleClose}
-                >
-                  <MenuItem onClick={handleEdit}>Editar</MenuItem>
-                  <MenuItem onClick={handleDelete}>Deletar</MenuItem>
-                </Menu>
+              <TableCell sx={{ color: '#007DF0', fontWeight: 'bold' }}>
+                Ano
               </TableCell>
+              <TableCell sx={{ color: '#007DF0', fontWeight: 'bold' }}>
+                Cor
+              </TableCell>
+              <TableCell sx={{ color: '#007DF0', fontWeight: 'bold' }}>
+                Propósito de uso
+              </TableCell>
+              <TableCell sx={{ color: '#007DF0', fontWeight: 'bold' }}>
+                Zero-quilômetro?
+              </TableCell>
+              <TableCell sx={{ color: '#007DF0', fontWeight: 'bold' }}>
+                Nível de conforto
+              </TableCell>
+              <TableCell sx={{ color: '#007DF0', fontWeight: 'bold' }}>
+                Local de repouso (lat, long)
+              </TableCell>
+              <TableCell
+                sx={{ color: '#007DF0', fontWeight: 'bold' }}
+              ></TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableHead>
+          <TableBody>
+            {sortedVeiculos.map((veiculo, index) => (
+              <TableRow key={index}>
+                <TableCell>{veiculo.placa}</TableCell>
+                <TableCell>
+                  {veiculo.marca} {veiculo.modelo}
+                </TableCell>
+                <TableCell>{veiculo.ano}</TableCell>
+                <TableCell>{veiculo.cor}</TableCell>
+                <TableCell>{veiculo.proposito}</TableCell>
+                <TableCell>{veiculo.zeroQuilometro ? 'Sim' : 'Não'}</TableCell>
+                <TableCell>{renderStars(veiculo.nivelConforto)}</TableCell>
+                <TableCell>
+                  {String(veiculo.latitude)}, {String(veiculo.longitude)}
+                </TableCell>
+                <TableCell>
+                  <IconButton onClick={(event) => handleClick(event, veiculo)}>
+                    <MoreHorizIcon />
+                  </IconButton>
+                  <Menu
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={handleClose}
+                  >
+                    <MenuItem onClick={handleEdit}>Editar</MenuItem>
+                    <MenuItem onClick={handleDelete}>Deletar</MenuItem>
+                  </Menu>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </div>
   );
 };
 
