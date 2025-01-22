@@ -1,9 +1,9 @@
 // App.tsx
-import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Login from './pages/Login';
 import NovoCadastro from './pages/NovoCadastro';
 import Home from './pages/Home';
+import 'leaflet/dist/leaflet.css';
 
 function App() {
   return (

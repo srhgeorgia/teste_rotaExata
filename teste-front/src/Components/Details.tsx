@@ -4,6 +4,8 @@ import styles from '../styles/Details.module.css';
 import CloseIcon from '@mui/icons-material/Close';
 import StarIcon from '@mui/icons-material/Star';
 import { IconButton } from '@mui/material';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { LatLngExpression } from 'leaflet';
 
 interface DetailsProps {
   open: boolean;
@@ -22,6 +24,11 @@ const Details = ({ open, onCancel, veiculo }: DetailsProps) => {
       </div>
     );
   };
+
+  const position: LatLngExpression = [
+    parseFloat(veiculo.latitude),
+    parseFloat(veiculo.longitude),
+  ];
 
   return (
     <Modal open={open}>
@@ -52,7 +59,10 @@ const Details = ({ open, onCancel, veiculo }: DetailsProps) => {
                 <div className={styles.imgVector}>
                   <img src="public/assets/Vector.png" alt="carro" />
                 </div>
-                <span className={styles.placa}>{veiculo.placa}</span>
+                <div className={styles.placaContent}>
+                  <span className={styles.placa}>{veiculo.placa}</span>
+                  <span className={styles.value}>Frota 101</span>
+                </div>
               </div>
             </Typography>
             <Typography className={styles.typography}>
@@ -103,13 +113,28 @@ const Details = ({ open, onCancel, veiculo }: DetailsProps) => {
           </div>
         </div>
 
+        <Typography className={styles.typographyLoc}>
+          <span className={styles.title}>Local de repouso (lat, long)</span>{' '}
+          <span className={styles.valueLoc}>
+            {veiculo.latitude}, {veiculo.longitude}
+          </span>
+        </Typography>
         <div className={styles.localizacao}>
-          <Typography className={styles.typographyLoc}>
-            <span className={styles.title}>Local de repouso (lat, long)</span>{' '}
-            <span className={styles.valueLoc}>
-              {veiculo.latitude}, {veiculo.longitude}
-            </span>
-          </Typography>
+          <MapContainer
+            center={position}
+            zoom={13}
+            className={styles.mapContainer}
+          >
+            <TileLayer
+              attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            <Marker position={position}>
+              <Popup>
+                Local de repouso: {veiculo.latitude}, {veiculo.longitude}
+              </Popup>
+            </Marker>
+          </MapContainer>
         </div>
       </Box>
     </Modal>

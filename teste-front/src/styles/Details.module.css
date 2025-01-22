@@ -14,11 +14,11 @@
 .details {
   display: flex;
   flex-direction: column;
-  padding: 0 20px 20px;
+  padding: 0 25px;
   border-radius: 5px;
   border: 1px solid #dfdfdf;
   margin: 35px 35px 0 35px;
-  height: 9rem;
+  height: 10rem;
 }
 
 .firstContainer {
@@ -29,7 +29,7 @@
 
 .secondContainer {
   display: flex;
-  width: 34.5%;
+  width: 37%;
   margin-top: 20px;
   justify-content: space-between;
 }
@@ -85,9 +85,17 @@
 
 .placaContainer {
   display: flex;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
   margin-top: 20px;
+}
+
+.placaContent {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  margin-left: 5px;
 }
 
 .placa {
@@ -117,11 +125,10 @@
 }
 
 .localizacao {
-  padding: 0 20px 20px;
   border-radius: 5px;
   border: 1px solid #dfdfdf;
   margin: 20px 35px;
-  height: 9rem;
+  height: 17rem;
 }
 
 .typographyLoc {
@@ -132,6 +139,18 @@
   width: 178px;
   height: 58px;
   padding: 10px;
+  position: fixed;
+  left: 5.5rem;
+  top: 19rem;
+  z-index: 10;
+  background-color: #ffffff;
+}
+
+.mapContainer {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  z-index: 1;
 }
 
 .valueLoc {

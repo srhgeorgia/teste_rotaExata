@@ -5,7 +5,7 @@ import VeiculosTable from '../Components/VeiculosTable';
 import DeleteModal from '../Components/DeleteModal';
 import styles from '../styles/Veiculos.module.css';
 import { Veiculo } from '../interfaces/Veiculo';
-import { TextField, MenuItem, FormControl } from '@mui/material';
+import { TextField, MenuItem, FormControl, Pagination } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
@@ -25,6 +25,9 @@ const Veiculos = () => {
   const [placaFilter, setPlacaFilter] = useState('');
   const [marcaFilter, setMarcaFilter] = useState('');
   const [propositoFilter, setPropositoFilter] = useState('');
+
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 5;
 
   const propositos = ['Uso pessoal', 'Veículo para locação', 'Uso da empresa'];
   const marcas = [
@@ -51,6 +54,11 @@ const Veiculos = () => {
     return true;
   });
 
+  const paginatedVeiculos = filteredVeiculos.slice(
+    (page - 1) * itemsPerPage,
+    page * itemsPerPage,
+  );
+
   useEffect(() => {
     const storedVeiculos = JSON.parse(localStorage.getItem('veiculos') || '[]');
     setVeiculos(storedVeiculos);
@@ -59,7 +67,26 @@ const Veiculos = () => {
   const saveHistorico = (action: string, veiculo: Veiculo) => {
     const historico = JSON.parse(localStorage.getItem('historico') || '[]');
     const timestamp = new Date().toLocaleString();
-    historico.push(`Veículo ${veiculo.placa} ${action} em ${timestamp}`);
+
+    let imageUrl = '';
+    switch (action) {
+      case 'CADASTRADO':
+        imageUrl = '/assets/plus-solid.png';
+        break;
+      case 'DELETADO':
+        imageUrl = '/assets/trash-solid.png';
+        break;
+      case 'EDITADO':
+        imageUrl = '/assets/pen-solid.png';
+        break;
+      default:
+        break;
+    }
+
+    historico.push({
+      texto: `Veículo <strong>${veiculo.placa}</strong> ${action} em ${timestamp}`,
+      imagem: imageUrl,
+    });
     localStorage.setItem('historico', JSON.stringify(historico));
   };
 
@@ -117,91 +144,96 @@ const Veiculos = () => {
     setEditingVeiculo(null);
   };
 
+  const handlePageChange = (
+    _event: React.ChangeEvent<unknown>,
+    value: number,
+  ) => {
+    setPage(value);
+  };
+
   return (
-    <>
-      {!isFormVisible && (
-        <div className={styles.header}>
-          <Button
-            label="Cadastrar veículo"
-            onClick={() => setIsFormVisible(true)}
-            className={styles.button}
-          />
-          <div className={styles.filters}>
-            <FormControl fullWidth required>
-              <TextField
-                select
-                value={marcaFilter}
-                onChange={(e) => setMarcaFilter(e.target.value)}
-                label="Marca"
-                size="small"
-                required
-                fullWidth
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              >
-                {marcas.map((marca, index) => (
-                  <MenuItem key={index} value={marca}>
-                    {marca}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </FormControl>
-            <FormControl fullWidth required>
-              <TextField
-                label="Propósito de uso"
-                select
-                value={propositoFilter}
-                onChange={(e) => setPropositoFilter(e.target.value)}
-                required
-                size="small"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                placeholder="Selecione o propósito de uso"
-                fullWidth
-              >
-                {propositos.map((proposito, index) => (
-                  <MenuItem key={index} value={proposito}>
-                    {proposito}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </FormControl>
+    <div className={styles.containerPrincipal}>
+      <div className={styles.header}>
+        <Button
+          label="Cadastrar veículo"
+          onClick={() => setIsFormVisible(true)}
+          className={styles.button}
+        />
+        <div className={styles.filters}>
+          <FormControl fullWidth required>
             <TextField
+              select
+              value={marcaFilter}
+              onChange={(e) => setMarcaFilter(e.target.value)}
+              label="Marca"
+              size="small"
+              required
               fullWidth
-              label="Placa"
-              value={placaFilter}
-              onChange={(e) => setPlacaFilter(e.target.value)}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            >
+              {marcas.map((marca, index) => (
+                <MenuItem key={index} value={marca}>
+                  {marca}
+                </MenuItem>
+              ))}
+            </TextField>
+          </FormControl>
+          <FormControl fullWidth required>
+            <TextField
+              label="Propósito de uso"
+              select
+              value={propositoFilter}
+              onChange={(e) => setPropositoFilter(e.target.value)}
               required
               size="small"
               InputLabelProps={{
                 shrink: true,
               }}
-            />
+              placeholder="Selecione o propósito de uso"
+              fullWidth
+            >
+              {propositos.map((proposito, index) => (
+                <MenuItem key={index} value={proposito}>
+                  {proposito}
+                </MenuItem>
+              ))}
+            </TextField>
+          </FormControl>
+          <TextField
+            fullWidth
+            label="Placa"
+            value={placaFilter}
+            onChange={(e) => setPlacaFilter(e.target.value)}
+            required
+            size="small"
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
 
-            <div className={styles.filterButtons}>
-              <IconButton
-                onClick={() => setIsSearchClicked(true)}
-                style={{ color: 'gray', width: '40px', height: '40px' }}
-              >
-                <SearchIcon data-testid="SearchIcon" />
-              </IconButton>
-              <div className={styles.separator}></div>
-              <IconButton
-                onClick={() => {
-                  setMarcaFilter('');
-                  setPropositoFilter('');
-                  setPlacaFilter('');
-                }}
-                style={{ color: 'gray', width: '40px', height: '40px' }}
-              >
-                <DeleteIcon data-testid="DeleteIcon" />
-              </IconButton>
-            </div>
+          <div className={styles.filterButtons}>
+            <IconButton
+              onClick={() => setIsSearchClicked(true)}
+              style={{ color: 'gray', width: '40px', height: '40px' }}
+            >
+              <SearchIcon data-testid="SearchIcon" />
+            </IconButton>
+            <div className={styles.separator}></div>
+            <IconButton
+              onClick={() => {
+                setMarcaFilter('');
+                setPropositoFilter('');
+                setPlacaFilter('');
+              }}
+              style={{ color: 'gray', width: '40px', height: '40px' }}
+            >
+              <DeleteIcon data-testid="DeleteIcon" />
+            </IconButton>
           </div>
         </div>
-      )}
+      </div>
 
       {isFormVisible && (
         <FormVeiculo
@@ -220,14 +252,12 @@ const Veiculos = () => {
         />
       )}
 
-      {!isFormVisible && (
-        <VeiculosTable
-          veiculos={filteredVeiculos}
-          onEdit={handleEditVeiculo}
-          onDelete={handleDeleteVeiculo}
-          onDetail={handleDetail}
-        />
-      )}
+      <VeiculosTable
+        veiculos={paginatedVeiculos}
+        onEdit={handleEditVeiculo}
+        onDelete={handleDeleteVeiculo}
+        onDetail={handleDetail}
+      />
 
       {isDeleteModalVisible && (
         <DeleteModal
@@ -245,7 +275,16 @@ const Veiculos = () => {
           onCancel={handleCancelDelete}
         />
       )}
-    </>
+
+      <Pagination
+        count={Math.ceil(filteredVeiculos.length / itemsPerPage)}
+        page={page}
+        onChange={handlePageChange}
+        variant="outlined"
+        shape="rounded"
+        className={styles.pagination}
+      />
+    </div>
   );
 };
 
